@@ -1,0 +1,8 @@
+*_sysconfig
+logs/*
+hosts.backup/*
+*.log
+*.rpm
+config.yml
+production.yml
+development.yml

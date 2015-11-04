@@ -1,0 +1,30 @@
+---
+Name:           fcollect
+Version:        1.0.2
+Release:        1.0.1
+License:        Artistic
+Summary:        "File collector over http(s)"
+Group:          "Applications/System"
+Description: |
+  This package provides a web service that enables the dropping of files into a specific directory.  See
+  https://github.com/Q-Technologies/fcollect for more details.
+BuildArch:      noarch
+BuildRoot:      %{_tmppath}/%{name}-build
+Url:            "https://github.com/Q-Technologies/fcollect"
+Author:         Q-Technologies
+SrcDir:         "/code/Dancer/fcollect/"
+PkgDir:         "/code/Dancer/fcollect/packaging"
+InstallRoot:    "/opt/fcollect"
+IncFiles:       ".*\.(p[lm]|yml|js|tt|png|gif|css|html)$"
+ExcFiles:       "\.DS_Store|development"
+ExcDirs:        "\.git|testing|packaging|client_scripts"
+ConfMode:       "600"
+DocIncFiles:    "LICENSE|.*README.*|.*\.md$"
+RunAs:
+  username: fcollect
+  home: "/opt/fcollect"
+Requires:       localperl
+LogDir:         1
+RCFile:         1
+CronFile:       0
+ChangeLog:      "- initial version (1.0)"

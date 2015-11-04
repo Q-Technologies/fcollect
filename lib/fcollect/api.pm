@@ -98,7 +98,12 @@ ajax '/upload' => sub {
     $result = $ans->{result};
     $msg = $ans->{message}; 
     $log = $ans->{log}; 
-    my $request = request->body;
+    #my $request = request->body;
+    my $request = JSON::to_json({ filename => $filename,
+                                   filepath => $filepath,
+                                   mode => $mode,
+                                   compresstype => $compresstype,
+                                 });
     $request =~ s/"/'/g;
     web_log( $user, $request, $result, $msg );
 

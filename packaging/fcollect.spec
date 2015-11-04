@@ -2,16 +2,17 @@
 # spec file for package fcollect
 #
 Name:           fcollect
-Version:        1.0
-Release:        1.0
+Version:        1.0.2
+Release:        1.0.1
 License:        Artistic
 Summary:        File collector over http(s)
 Url:            https://github.com/Q-Technologies/fcollect
 Group:          Applications/System
 BuildArch:      noarch
 BuildRoot:      %{_tmppath}/%{name}-build
-Requires:       perl(YAML)
- 
+Provides: localperl
+Source: fcollect-1.0.2-1.0.1.tar.bz2
+
 %description
 This package provides a web service that enables the dropping of files into a specific directory.  See
 https://github.com/Q-Technologies/fcollect for more details.
@@ -19,46 +20,56 @@ https://github.com/Q-Technologies/fcollect for more details.
 %prep
 rm -rf *
 
+%setup -c 
+
 %build
 
 %pre
-id fcollect 2>/dev/null
+id fcollect >/dev/null 2>&1
 if [[ $? -eq 1 ]]; then
-    useradd -r -b /opt fcollect
+    useradd -r -d /opt/fcollect fcollect
 fi
 
 %install
 rm -rf $RPM_BUILD_ROOT/*
-mkdir -p $RPM_BUILD_ROOT/opt/fcollect
-mkdir -p $RPM_BUILD_ROOT/opt/fcollect/bin
-mkdir -p $RPM_BUILD_ROOT/opt/fcollect/lib
-mkdir -p $RPM_BUILD_ROOT/opt/fcollect/lib/fcollect
-mkdir -p $RPM_BUILD_ROOT/opt/fcollect/logs
-mkdir -p $RPM_BUILD_ROOT/opt/fcollect/environments
 mkdir -p $RPM_BUILD_ROOT/var/log/fcollect
 mkdir -p $RPM_BUILD_ROOT/etc/init.d
-mkdir -p $RPM_BUILD_ROOT/etc/cron.d
 mkdir -p $RPM_BUILD_ROOT/etc/sysconfig
-install -m 755 $RPM_SOURCE_DIR/bin/app.pl $RPM_BUILD_ROOT/opt/fcollect/bin/app.pl
-install -m 644 $RPM_SOURCE_DIR/config.yml $RPM_BUILD_ROOT/opt/fcollect/config.yml
-install -m 644 $RPM_SOURCE_DIR/environments/production.yml $RPM_BUILD_ROOT/opt/fcollect/environments/production.yml
-install -m 644 $RPM_SOURCE_DIR/lib/fcollect.pm $RPM_BUILD_ROOT/opt/fcollect/lib/fcollect.pm
-install -m 644 $RPM_SOURCE_DIR/lib/fcollect/api.pm $RPM_BUILD_ROOT/opt/fcollect/lib/fcollect/api.pm
 mkdir -p $RPM_BUILD_ROOT/usr/share/doc/fcollect/
-install -m 644 $RPM_SOURCE_DIR/README.md $RPM_BUILD_ROOT/usr/share/doc/fcollect/
-install -m 644 $RPM_SOURCE_DIR/LICENSE $RPM_BUILD_ROOT/usr/share/doc/fcollect/
-install -m 644 $RPM_SOURCE_DIR/fcollect_rcfile $RPM_BUILD_ROOT/etc/init.d/fcollect
-install -m 644 $RPM_SOURCE_DIR/fcollect_sysconfig $RPM_BUILD_ROOT/etc/sysconfig/fcollect
+mkdir -p $RPM_BUILD_ROOT//opt/fcollect
+mkdir -p $RPM_BUILD_ROOT//opt/fcollect/
+mkdir -p $RPM_BUILD_ROOT//opt/fcollect/environments
+mkdir -p $RPM_BUILD_ROOT//opt/fcollect/lib
+mkdir -p $RPM_BUILD_ROOT//opt/fcollect/bin
+mkdir -p $RPM_BUILD_ROOT//opt/fcollect/lib/fcollect
+mkdir -p $RPM_BUILD_ROOT/usr/share/doc/fcollect/
+install -m 644 config.yml $RPM_BUILD_ROOT//opt/fcollect/config.yml
+install -m 755 bin/app.pl $RPM_BUILD_ROOT//opt/fcollect/bin/app.pl
+install -m 644 environments/production.yml $RPM_BUILD_ROOT//opt/fcollect/environments/production.yml
+install -m 644 lib/fcollect.pm $RPM_BUILD_ROOT//opt/fcollect/lib/fcollect.pm
+install -m 644 lib/fcollect/api.pm $RPM_BUILD_ROOT//opt/fcollect/lib/fcollect/api.pm
+install -m 644 LICENSE $RPM_BUILD_ROOT/usr/share/doc/fcollect/LICENSE
+install -m 644 README.md $RPM_BUILD_ROOT/usr/share/doc/fcollect/README.md
+install -m 644 $RPM_SOURCE_DIR/fcollect.rcfile $RPM_BUILD_ROOT/etc/init.d/fcollect
+install -m 644 $RPM_SOURCE_DIR/fcollect.sysconfig $RPM_BUILD_ROOT/etc/sysconfig/fcollect
 
 %files
 %defattr(644,fcollect,fcollect,755)
-   /opt/fcollect/
-   /var/log/fcollect
-%attr(755,root,root) /etc/init.d/fcollect
-%attr(644,root,root) /etc/sysconfig/fcollect
-%config /etc/sysconfig/fcollect
+    /opt/fcollect
+    /opt/fcollect/
+    /opt/fcollect/environments
+    /opt/fcollect/lib
+    /opt/fcollect/bin
+    /opt/fcollect/lib/fcollect
+%attr(755,fcollect,fcollect) /opt/fcollect/bin/app.pl
+%attr(755,fcollect,fcollect) /var/log/fcollect
+%attr(600,fcollect,fcollect) /opt/fcollect/config.yml
 %config /opt/fcollect/config.yml
+%attr(600,fcollect,fcollect) /opt/fcollect/environments/production.yml
 %config /opt/fcollect/environments/production.yml
+%attr(755,fcollect,fcollect) /etc/init.d/fcollect
+%attr(644,fcollect,fcollect) /etc/sysconfig/fcollect
+%config /etc/sysconfig/fcollect
 %docdir /usr/share/doc/fcollect/
 /usr/share/doc/fcollect/
 
@@ -75,10 +86,6 @@ rm -rf %{_topdir}/BUILD/%{name}
 chkconfig fcollect off
 service fcollect stop
 
-%postun
-userdel fcollect
-
 %changelog
-* Mon May 25 2015 matt@Q-Technologies.com.au
-- initial RPM version (1.0)
-
+* Thu Sep 10 2015 Q-Technologies
+- initial version (1.0)

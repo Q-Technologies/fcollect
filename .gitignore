@@ -3,6 +3,7 @@ logs/*
 hosts.backup/*
 *.log
 *.rpm
+client.yml
 config.yml
 production.yml
 development.yml

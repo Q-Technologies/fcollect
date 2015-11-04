@@ -28,7 +28,7 @@ my $server_data_url;
 if( $env eq 'dev' ){
     $server_data_url = "'https://remote-server/api/upload?userid=$username&passwd=$password'";
 } elsif( $env eq 'local' ){
-    my $cleanup = "find t | grep -Ev '".'\.t\d+$'."' | xargs rm 2>/dev/null";
+    my $cleanup = "find dropped -type f| grep -Ev '".'\.t\d+$'."' | xargs rm #2>/dev/null";
     `$cleanup`;
     $server_data_url = "'http://dev010:3002/api/upload?userid=$username&passwd=$password'";
 } else {
@@ -41,12 +41,12 @@ my $refence;
 my $data;
    
 my @tests = ( 
-              { name => 'create an initial file do not specify compression',
-                status => '{"action":"upload","message":"ERROR: Unknown compression format","result":"failed"}',
-                nofilecreated => 1,
+              { name => 'create an initial file - do not specify compression - empty filepath',
+                status => '{"action":"upload","message":"Successfully saved the file to disk","result":"success"}',
+                nofilecreated => 0,
                 data => { 
                           'filename' => "test1.txt",
-                          'filepath' => "test/test/test",
+                          'filepath' => "",
                           'filecontents' => "Some file contents",
                           'mode' => "overwrite",
                         } 
@@ -62,7 +62,7 @@ my @tests = (
                         } 
               }, 
               { name => 'repeat creation of file - do not overwrite',
-                status => '{"action":"upload","message":"ERROR: t/test/test/test/test.txt already exists and \'overwrite\' or \'append\' has not been turned on","result":"failed"}',
+                status => '{"action":"upload","message":"ERROR: testing/dropped/test/test/test/test.txt already exists and \'overwrite\' or \'append\' has not been turned on","result":"failed"}',
                 ignorefile => 1,
                 data => { 
                           'filename' => "test.txt",
@@ -72,16 +72,17 @@ my @tests = (
                           'compresstype' => "none",
                         } 
               }, 
-              { name => 'repeat creation of file - do overwrite',
+              { name => 'repeat creation of file - do overwrite, don\'t specify compression',
                 status => '{"action":"upload","message":"Successfully saved the file to disk","result":"success"}',
                 data => { 
                           'filename' => "test.txt",
                           'filepath' => "test/test/test",
                           'filecontents' => "Some file contents",
                           'mode' => "overwrite",
-                          'compresstype' => "none",
                         } 
               }, 
+            #);
+#my @tests = ( 
               { name => 'set compression type to gzip but supply uncompressed data',
                 status => '{"action":"upload","message":"ERROR: Couldn\'t uncompress the file contents: gunzip failed: Header Error: Bad Magic\n","result":"failed"}',
                 nofilecreated => 1,
@@ -93,6 +94,8 @@ my @tests = (
                           'compresstype' => "gzip",
                         } 
               }, 
+            #);
+#my @tests2 = ( 
               { name => 'set compression type to gzip and supply compressed data',
                 status => '{"action":"upload","message":"Successfully saved the file to disk","result":"success"}',
                 data => { 
@@ -142,7 +145,7 @@ for( my $i = 0; $i < @tests ; $i++ ){
     my $status = $tests[$i]->{status};
     my $ans;
     $refence = File::Spec->catfile( ('t', $tests[$i]->{data}{filepath} ), $tests[$i]->{data}{filename} .".". $test );
-    $modded = File::Spec->catfile( ('/etswiki/data/pages/repmon/dropped', $tests[$i]->{data}{filepath} ), $tests[$i]->{data}{filename} );
+    $modded = File::Spec->catfile( ('dropped', $tests[$i]->{data}{filepath} ), $tests[$i]->{data}{filename} );
     send_data( $server_data_url, $data, \$ans ); 
     is( $ans, $status, 'Check result for: ' .$name );
     if( $env eq 'local' and not $tests[$i]->{ignorefile} ){

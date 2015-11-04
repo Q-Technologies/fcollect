@@ -108,7 +108,7 @@ sub save_file_to_disk {
     # Check whether the specified compression is supported and uncompress if so
     if( $result eq SUCCESS ){
         my ($buf1, $buf2);
-        if( $compresstype eq "none" ){
+        if( $compresstype eq "none" or ! $compresstype ){
             $result = SUCCESS;
         } elsif( $compresstype =~ /^(gzip|bzip2|lzma|lzf|xz|lzop|zlib)$/ ){
             eval { $buf1 = decode_base64($filecontents) }; 

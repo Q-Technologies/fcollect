@@ -1,0 +1,27 @@
+---
+SrcDir: "/code/Dancer/fcollect/client_scripts"
+PkgDir: "/code/Dancer/fcollect/packaging"
+InstallRoot: "/opt/local/bin"
+IncFiles: "send2fcollect.pl"
+ExcFiles: "^\..+.+.*"
+ConfDir: "/etc/fcollect"
+ConfIncFiles: "client.*\.yml"
+ConfMode: "600"
+DocIncFiles: "LICENSE|.*README.*|.*\.md$"
+Description: |
+  The send2fcollect.pl script send a file of STDIN to the specified
+  fcollect service
+Name: fcollect-client
+Version: 1.0.2
+Release: 1.0.1
+License: Artistic
+Summary: "fcollect client program"
+Url: "https://github.com/Q-Technologies/fcollect"
+Group: "Development/Libraries"
+BuildArch: noarch
+BuildRoot: %{_tmppath}/%{name}-build
+Author: Q-Technologies
+LogDir: 0
+RCFile: 0
+CronFile: 0
+ChangeLog: "- initial version (1.0)"
